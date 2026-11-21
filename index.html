@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join our Telegram channel</title>
+<style>
+:root{--bg:#f4f8fc;--card:#ffffff;--text:#14212e;--muted:#5b6b7b;--blue1:#2aabee;--blue2:#229ed9;--border:#dde7f0;--warn:#fff4d6;--warnt:#6b4e00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1621;--card:#17212b;--text:#f1f5f9;--muted:#8fa3b5;--border:#243040;--warn:#3a2f10;--warnt:#ffd77a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1621;--card:#17212b;--text:#f1f5f9;--muted:#8fa3b5;--border:#243040;--warn:#3a2f10;--warnt:#ffd77a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 10px 40px rgba(34,158,217,.15)}
+.logo{width:110px;height:110px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,var(--blue1),var(--blue2));display:flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;font-size:2.8rem;font-weight:700}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+h1{font-size:1.6rem;margin:0 0 10px}
+p{color:var(--muted);line-height:1.55;margin:0 0 28px}
+.btn{display:block;width:100%;padding:16px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--blue1),var(--blue2));color:#fff;font-size:1.1rem;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .15s;box-shadow:0 6px 18px rgba(34,158,217,.4);font-family:inherit}
+.btn:active{transform:scale(.97)}
+.note{margin-top:16px;font-size:.85rem;color:var(--muted)}
+.note a{color:var(--blue2)}
+.warn{display:none;margin-top:16px;padding:12px;border-radius:12px;background:var(--warn);color:var(--warnt);font-size:.9rem;line-height:1.5}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="logo" id="logo"></div>
+  <h1 id="title"></h1>
+  <p>Get the latest updates, news and exclusive content straight to your phone. Tap the button below to open Telegram.</p>
+  <a id="join" class="btn" href="#">Join the channel</a>
+  <div class="warn" id="warn">If the app doesn’t open: tap the ⋯ menu at the top of this browser, choose “Open in browser”, then tap the button again.</div>
+  <div class="note">Button not working? <a id="fallback" href="#">Open the link</a></div>
+</main>
+<script>
+// ====== EDIT THESE VALUES ======
+var CHANNEL_LINK = "https://t.me/avazoey";   // your channel link
+var CHANNEL_NAME = "Ava Zoey fans😍";                // your channel name
+var LOGO_URL     = "https://images.unsplash.com/photo-1583900985737-6d0495555783?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D";                            // your channel logo image URL
+// ===============================
+
+document.getElementById("title").textContent = "Join " + CHANNEL_NAME;
+var logo = document.getElementById("logo");
+function showLetter(){ logo.textContent = (CHANNEL_NAME || "T").trim().charAt(0); }
+if (LOGO_URL) {
+  var img = new Image();
+  img.alt = CHANNEL_NAME;
+  img.onload = function(){ logo.textContent = ""; logo.appendChild(img); };
+  img.onerror = showLetter;
+  showLetter();
+  img.src = LOGO_URL;
+} else { showLetter(); }
+
+var btn = document.getElementById("join");
+var fb = document.getElementById("fallback");
+btn.href = fb.href = CHANNEL_LINK;
+
+var m = CHANNEL_LINK.match(/t\.me\/(?:\+|joinchat\/)([\w-]+)/i);
+var u = CHANNEL_LINK.match(/t\.me\/([\w]+)/i);
+var tgPath = m ? "join?invite=" + m[1] : "resolve?domain=" + (u ? u[1] : "");
+var tgLink = "tg://" + tgPath;
+var ua = navigator.userAgent || "";
+var isAndroid = /Android/i.test(ua);
+var inApp = /Twitter|FBAN|FBAV|Instagram|Line\/|Snapchat|TikTok|musical_ly/i.test(ua) || (/wv\)/.test(ua) && isAndroid);
+if (inApp) document.getElementById("warn").style.display = "block";
+
+btn.addEventListener("click", function (e) {
+  e.preventDefault();
+  var left = false;
+  function onLeave(){ left = true; }
+  window.addEventListener("pagehide", onLeave);
+  window.addEventListener("blur", onLeave);
+  document.addEventListener("visibilitychange", function(){ if (document.hidden) left = true; });
+
+  if (isAndroid) {
+    window.location.href = "intent://" + tgPath + "#Intent;scheme=tg;package=org.telegram.messenger;S.browser_fallback_url=" + encodeURIComponent(CHANNEL_LINK) + ";end";
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = tgLink; a.style.display = "none";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){
+    if (!left && !inApp) window.location.href = CHANNEL_LINK;
+    else if (!left) document.getElementById("warn").style.display = "block";
+  }, 1500);
+});
+</script>
+</body>
+</html>
